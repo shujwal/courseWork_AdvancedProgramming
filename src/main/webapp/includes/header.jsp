@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.pro.pro.user.model.User" %>
+<%@ page import="com.advancedprogramming.foodsharehub.user.model.User" %>
 <%
     User user = (User) session.getAttribute("user");
     String contextPath = request.getContextPath();
@@ -203,17 +203,21 @@ main {
 
 /* Footer Styles */
 .site-footer {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(240, 248, 242, 0.96);
     backdrop-filter: blur(10px);
     margin-top: 3rem;
     padding: 2rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(94, 143, 105, 0.22);
 }
 
 .footer-inner {
     text-align: center;
-    color: #666;
+    color: #3f5f48;
     font-size: 0.9rem;
+}
+
+.footer-inner .footer-copy {
+    color: #3f5f48;
 }
 
 /* Responsive Design */
@@ -367,4 +371,4 @@ main {
         </nav>
     </div>
 </header>
-<main class="container">
+<main class="container"/>
