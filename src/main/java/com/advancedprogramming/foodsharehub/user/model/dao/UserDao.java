@@ -7,6 +7,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDao {
 
@@ -71,5 +73,81 @@ public class UserDao {
             }
         }
         return user;
+    }
+
+    // READ ALL USERS
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                return users;
+            }
+            String sql = "SELECT * FROM user";
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                 ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setFullName(rs.getString("name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setRole(rs.getString("role"));
+                    users.add(user);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    // READ ALL VOLUNTEERS
+    public List<User> getAllVolunteers() {
+        List<User> volunteers = new ArrayList<>();
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                return volunteers;
+            }
+            String sql = "SELECT * FROM user WHERE role='volunteer' ORDER BY name ASC";
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                 ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setFullName(rs.getString("name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setRole(rs.getString("role"));
+                    volunteers.add(user);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return volunteers;
+    }
+
+    // GET VOLUNTEER BY NAME
+    public User getVolunteerByName(String name) {
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                return null;
+            }
+            String sql = "SELECT * FROM user WHERE name=? AND role='volunteer'";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, name);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        User user = new User();
+                        user.setId(rs.getInt("id"));
+                        user.setFullName(rs.getString("name"));
+                        user.setEmail(rs.getString("email"));
+                        user.setRole(rs.getString("role"));
+                        return user;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

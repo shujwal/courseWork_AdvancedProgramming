@@ -1,8 +1,32 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.advancedprogramming.foodsharehub.user.model.User" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%
     User user = (User) session.getAttribute("user");
     String contextPath = request.getContextPath();
+    Integer totalUsers = (Integer) request.getAttribute("totalUsers");
+    Integer donorCount = (Integer) request.getAttribute("donorCount");
+    Integer volunteerCount = (Integer) request.getAttribute("volunteerCount");
+    Integer adminCount = (Integer) request.getAttribute("adminCount");
+    Integer totalDonations = (Integer) request.getAttribute("totalDonations");
+    Integer availableDonations = (Integer) request.getAttribute("availableDonations");
+    Integer assignedDonations = (Integer) request.getAttribute("assignedDonations");
+    Integer completedDonations = (Integer) request.getAttribute("completedDonations");
+    Integer pendingDonations = (Integer) request.getAttribute("pendingDonations");
+    List<User> users = (List<User>) request.getAttribute("users");
+    if (users == null) {
+        users = new ArrayList<>();
+    }
+    totalUsers = totalUsers == null ? users.size() : totalUsers;
+    donorCount = donorCount == null ? 0 : donorCount;
+    volunteerCount = volunteerCount == null ? 0 : volunteerCount;
+    adminCount = adminCount == null ? 0 : adminCount;
+    totalDonations = totalDonations == null ? 0 : totalDonations;
+    availableDonations = availableDonations == null ? 0 : availableDonations;
+    assignedDonations = assignedDonations == null ? 0 : assignedDonations;
+    completedDonations = completedDonations == null ? 0 : completedDonations;
+    pendingDonations = pendingDonations == null ? 0 : pendingDonations;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -328,43 +352,43 @@
                 <div class="dashboard-grid">
                     <div class="stat-card">
                         <div class="stat-info">
-                            <h3>12</h3>
+                            <h3><%= totalUsers %></h3>
                             <p>Total Users</p>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-info">
-                            <h3>28</h3>
-                            <p>Active Donations</p>
+                            <h3><%= totalDonations %></h3>
+                            <p>Total Donations</p>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-info">
-                            <h3>15</h3>
-                            <p>Pending Review</p>
+                            <h3><%= availableDonations %></h3>
+                            <p>Available Donations</p>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-info">
-                            <h3>8</h3>
+                            <h3><%= assignedDonations %></h3>
+                            <p>Assigned Donations</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3><%= completedDonations %></h3>
                             <p>Completed Donations</p>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-info">
-                            <h3>5</h3>
-                            <p>Active Volunteers</p>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-info">
-                            <h3>3</h3>
-                            <p>Reported Issues</p>
+                            <h3><%= pendingDonations %></h3>
+                            <p>Pending Donations</p>
                         </div>
                     </div>
                 </div>
@@ -373,11 +397,91 @@
                     <h2>Quick Actions</h2>
                     <div class="action-buttons">
                         <a href="<%= contextPath %>/donations" class="action-btn">Manage Donations</a>
-                        <a href="#" class="action-btn">View Users</a>
-                        <a href="#" class="action-btn">Reports</a>
+                        <a href="#user-report" class="action-btn">View Users</a>
+                        <a href="#donation-report" class="action-btn">Reports</a>
                         <a href="<%= contextPath %>/logout" class="action-btn secondary">Logout</a>
                     </div>
                 </div>
+
+                <section id="user-report" class="action-area" style="margin-top: 30px;">
+                    <h2>User Overview</h2>
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3><%= donorCount %></h3>
+                                <p>Total Donors</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3><%= volunteerCount %></h3>
+                                <p>Total Volunteers</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3><%= adminCount %></h3>
+                                <p>Total Admins</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-wrapper" style="margin-top: 20px;">
+                        <h3>All Users</h3>
+                        <table class="table-list" style="width:100%; margin-top:10px;">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                            </tr>
+                            <% if (users.isEmpty()) { %>
+                            <tr>
+                                <td colspan="4" style="text-align:center; padding: 1rem;">No users found.</td>
+                            </tr>
+                            <% } else {
+                                for (User u : users) {
+                            %>
+                            <tr>
+                                <td><%= u.getId() %></td>
+                                <td><%= u.getFullName() %></td>
+                                <td><%= u.getEmail() %></td>
+                                <td><%= u.getRole() %></td>
+                            </tr>
+                            <%   }
+                            } %>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="donation-report" class="action-area" style="margin-top: 30px;">
+                    <h2>Donation Report</h2>
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3><%= availableDonations %></h3>
+                                <p>Available</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3><%= assignedDonations %></h3>
+                                <p>Assigned</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3><%= completedDonations %></h3>
+                                <p>Completed</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h3><%= pendingDonations %></h3>
+                                <p>Pending</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>

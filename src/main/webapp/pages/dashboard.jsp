@@ -65,7 +65,9 @@
                     <p>Share surplus food with local communities — it’s safe, simple and makes a big difference. Create a donation listing in a few easy steps and reach people who need it.</p>
                 </div>
                 <div class="hero-actions">
+                    <% if (currentUser != null && "donor".equals(currentUser.getRole())) { %>
                     <a class="btn" href="<%= contextPath %>/pages/add-donation.jsp">Donate Food</a>
+                    <% } %>
                     <a class="btn secondary" href="<%= contextPath %>/donations">Browse Donations</a>
                 </div>
             </section>

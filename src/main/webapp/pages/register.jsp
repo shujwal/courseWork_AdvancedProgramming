@@ -165,8 +165,8 @@
                 <label class="label" for="password">Password</label>
                 <input class="input-field" type="password" id="password" name="password" required>
 
-                <label class="label" for="role">Account type</label>
-                <select class="select-field" id="role" name="role">
+                <label class="label" for="accountType">Account type</label>
+                <select class="select-field" id="accountType" name="accountType">
                     <option value="donor">Donor</option>
                     <option value="volunteer">Volunteer</option>
                 </select>

@@ -1,8 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.advancedprogramming.foodsharehub.user.model.User" %>
 <%
-    User user = (User) session.getAttribute("user");
-    String contextPath = request.getContextPath();
+    User currentUser = (User) session.getAttribute("user");
+    String basePath = request.getContextPath();
+    String contextPath = basePath;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -351,22 +352,22 @@ main {
 <body>
 <header class="site-header">
     <div class="container header-inner">
-        <a class="brand" href="<%= contextPath %>/">FoodShare Hub</a>
+        <a class="brand" href="<%= basePath %>/">FoodShare Hub</a>
         <nav class="nav-links">
-            <a href="<%= contextPath %>/">Home</a>
-            <a href="<%= contextPath %>/donations">Donations</a>
-            <% if (user == null) { %>
-            <a href="<%= contextPath %>/register">Register</a>
-            <a href="<%= contextPath %>/login">Login</a>
+            <a href="<%= basePath %>/">Home</a>
+            <a href="<%= basePath %>/donations">Donations</a>
+            <% if (currentUser == null) { %>
+            <a href="<%= basePath %>/register">Register</a>
+            <a href="<%= basePath %>/login">Login</a>
             <% } else { %>
-            <% if ("admin".equals(user.getRole())) { %>
-            <a href="<%= contextPath %>/admin-dashboard">Admin</a>
-            <% } else if ("volunteer".equals(user.getRole())) { %>
-            <a href="<%= contextPath %>/volunteer-dashboard">Volunteer</a>
+            <% if ("admin".equals(currentUser.getRole())) { %>
+            <a href="<%= basePath %>/admin-dashboard">Admin</a>
+            <% } else if ("volunteer".equals(currentUser.getRole())) { %>
+            <a href="<%= basePath %>/volunteer-dashboard">Volunteer</a>
             <% } else { %>
-            <a href="<%= contextPath %>/dashboard">Dashboard</a>
+            <a href="<%= basePath %>/dashboard">Dashboard</a>
             <% } %>
-            <a href="<%= contextPath %>/logout">Logout</a>
+            <a href="<%= basePath %>/logout">Logout</a>
             <% } %>
         </nav>
     </div>
