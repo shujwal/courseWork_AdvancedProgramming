@@ -1,5 +1,6 @@
 package com.advancedprogramming.foodsharehub.donation.controller;
 
+import com.advancedprogramming.foodsharehub.assignment.model.dao.AssignmentDao;
 import com.advancedprogramming.foodsharehub.donation.model.Donation;
 import com.advancedprogramming.foodsharehub.donation.model.dao.DonationDao;
 import com.advancedprogramming.foodsharehub.user.model.User;
@@ -17,6 +18,7 @@ import java.io.IOException;
 public class DonationServlet extends HttpServlet {
 
     DonationDao dao = new DonationDao();
+    AssignmentDao assignmentDao = new AssignmentDao();
     UserDao userDao = new UserDao();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -56,7 +58,7 @@ public class DonationServlet extends HttpServlet {
                 return;
             }
             
-            dao.assignVolunteer(id, volunteer.getId());
+            assignmentDao.assignVolunteer(id, volunteer.getId());
             response.sendRedirect(request.getContextPath() + "/donations");
         } else if ("updateStatus".equals(action)) {
             if (!"volunteer".equals(user.getRole())) {
@@ -69,7 +71,7 @@ public class DonationServlet extends HttpServlet {
                 response.sendRedirect("donations");
                 return;
             }
-            dao.updateStatus(id, "completed");
+            assignmentDao.updateStatus(id, "completed");
             response.sendRedirect(request.getContextPath() + "/donations");
         } else if ("edit".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));

@@ -21,13 +21,7 @@ public class DonationDao {
             }
             String sql = "INSERT INTO donation(food_name, quantity, expiry_date, location, donor_id) VALUES(?,?,?,?,?)";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, d.getFoodName());
-                ps.setInt(2, d.getQuantity());
-                if (d.getExpiryDate() == null || d.getExpiryDate().isBlank()) {
-                    throw new IllegalArgumentException("Expiry date is required");
-                }
-                ps.setDate(3, parseExpiryDate(d.getExpiryDate()));
-                ps.setString(4, d.getLocation());
+                bindDonationBaseFields(ps, d, false);
                 ps.setInt(5, d.getDonorId());
                 ps.executeUpdate();
             }
@@ -42,48 +36,18 @@ public class DonationDao {
 
     // READ
     public List<Donation> getAllDonations() {
-        List<Donation> list = new ArrayList<>();
         String sql = "SELECT d.*, a.id AS assignment_id, a.volunteer_id AS volunteer_id, a.status AS status FROM donation d LEFT JOIN assignment a ON d.id = a.donation_id ORDER BY d.id ASC";
-        try (Connection conn = DbConnection.getConnection(); Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                list.add(mapDonation(rs));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
+        return queryDonations(sql);
     }
 
     public List<Donation> getDonationsByDonor(int donorId) {
-        List<Donation> list = new ArrayList<>();
         String sql = "SELECT d.*, a.id AS assignment_id, a.volunteer_id AS volunteer_id, a.status AS status FROM donation d LEFT JOIN assignment a ON d.id = a.donation_id WHERE d.donor_id=? ORDER BY d.id ASC";
-        try (Connection conn = DbConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, donorId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapDonation(rs));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
+        return queryDonations(sql, donorId);
     }
 
     public List<Donation> getDonationsByVolunteer(int volunteerId) {
-        List<Donation> list = new ArrayList<>();
         String sql = "SELECT d.*, a.id AS assignment_id, a.volunteer_id AS volunteer_id, a.status AS status FROM donation d JOIN assignment a ON d.id = a.donation_id WHERE a.volunteer_id=? ORDER BY d.id ASC";
-        try (Connection conn = DbConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, volunteerId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapDonation(rs));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
+        return queryDonations(sql, volunteerId);
     }
 
     private Donation mapDonation(ResultSet rs) throws Exception {
@@ -112,12 +76,41 @@ public class DonationDao {
         return java.sql.Date.valueOf(expiryDate);
     }
 
-    // READ BY ID
-    public Donation getDonationById(int id) {
-        Donation donation = null;
-        String sql = "SELECT d.*, a.id AS assignment_id, a.volunteer_id AS volunteer_id, a.status AS status FROM donation d LEFT JOIN assignment a ON d.id = a.donation_id WHERE d.id=?";
+    private int bindDonationBaseFields(PreparedStatement ps, Donation d, boolean allowNullExpiry) throws Exception {
+        ps.setString(1, d.getFoodName());
+        ps.setInt(2, d.getQuantity());
+        if (d.getExpiryDate() == null || d.getExpiryDate().isBlank()) {
+            if (allowNullExpiry) {
+                ps.setNull(3, java.sql.Types.DATE);
+            } else {
+                throw new IllegalArgumentException("Expiry date is required");
+            }
+        } else {
+            ps.setDate(3, parseExpiryDate(d.getExpiryDate()));
+        }
+        ps.setString(4, d.getLocation());
+        return 4;
+    }
+
+    private List<Donation> queryDonations(String sql, Object... params) {
+        List<Donation> list = new ArrayList<>();
         try (Connection conn = DbConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            setParameters(ps, params);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapDonation(rs));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    private Donation queryDonation(String sql, Object... params) {
+        Donation donation = null;
+        try (Connection conn = DbConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            setParameters(ps, params);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     donation = mapDonation(rs);
@@ -129,6 +122,18 @@ public class DonationDao {
         return donation;
     }
 
+    private void setParameters(PreparedStatement ps, Object... params) throws Exception {
+        for (int i = 0; i < params.length; i++) {
+            ps.setObject(i + 1, params[i]);
+        }
+    }
+
+    // READ BY ID
+    public Donation getDonationById(int id) {
+        String sql = "SELECT d.*, a.id AS assignment_id, a.volunteer_id AS volunteer_id, a.status AS status FROM donation d LEFT JOIN assignment a ON d.id = a.donation_id WHERE d.id=?";
+        return queryDonation(sql, id);
+    }
+
     // UPDATE
     public void updateDonation(Donation d) {
         try {
@@ -138,14 +143,7 @@ public class DonationDao {
                     throw new RuntimeException("Failed to update donation: database connection is null");
                 }
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setString(1, d.getFoodName());
-                    ps.setInt(2, d.getQuantity());
-                    if (d.getExpiryDate() == null || d.getExpiryDate().isBlank()) {
-                        ps.setNull(3, java.sql.Types.DATE);
-                    } else {
-                        ps.setDate(3, java.sql.Date.valueOf(d.getExpiryDate()));
-                    }
-                    ps.setString(4, d.getLocation());
+                    bindDonationBaseFields(ps, d, true);
                     ps.setInt(5, d.getId());
                     ps.executeUpdate();
                 }
@@ -182,55 +180,4 @@ public class DonationDao {
         }
     }
 
-    // ASSIGN VOLUNTEER
-    public void assignVolunteer(int donationId, int volunteerId) {
-        try (Connection conn = DbConnection.getConnection()) {
-            if (conn == null) {
-                return;
-            }
-
-            String findSql = "SELECT id FROM assignment WHERE donation_id=?";
-            try (PreparedStatement find = conn.prepareStatement(findSql)) {
-                find.setInt(1, donationId);
-                try (ResultSet rs = find.executeQuery()) {
-                    if (rs.next()) {
-                        String updateSql = "UPDATE assignment SET volunteer_id=?, status='pending' WHERE donation_id=?";
-                        try (PreparedStatement update = conn.prepareStatement(updateSql)) {
-                            update.setInt(1, volunteerId);
-                            update.setInt(2, donationId);
-                            update.executeUpdate();
-                        }
-                        return;
-                    }
-                }
-            }
-
-            String insertSql = "INSERT INTO assignment(donation_id, volunteer_id, status) VALUES(?,?, 'pending')";
-            try (PreparedStatement insert = conn.prepareStatement(insertSql)) {
-                insert.setInt(1, donationId);
-                insert.setInt(2, volunteerId);
-                insert.executeUpdate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // UPDATE STATUS
-    public void updateStatus(int donationId, String status) {
-        try (Connection conn = DbConnection.getConnection()) {
-            if (conn == null) {
-                return;
-            }
-
-            String sql = "UPDATE assignment SET status=? WHERE donation_id=?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, status);
-                ps.setInt(2, donationId);
-                ps.executeUpdate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
