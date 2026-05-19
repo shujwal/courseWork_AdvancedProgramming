@@ -25,7 +25,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f8f9fa;
     min-height: 100vh;
 }
 
@@ -55,13 +55,13 @@ body {
 .brand {
     font-size: 1.8rem;
     font-weight: bold;
-    color: #667eea;
+    color: #1a4d5c;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .brand:hover {
-    color: #764ba2;
+    color: #0f3a47;
 }
 
 .nav-links {
@@ -80,7 +80,7 @@ body {
 }
 
 .nav-links a:hover {
-    background: #667eea;
+    background: #1a4d5c;
     color: white;
     transform: translateY(-2px);
 }
@@ -145,13 +145,13 @@ main {
 
 .input-field:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #1a4d5c;
     background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(26, 77, 92, 0.1);
 }
 
 .primary-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a4d5c;
     color: white;
     border: none;
     padding: 0.9rem 2rem;
@@ -166,7 +166,7 @@ main {
 
 .primary-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 5px 15px rgba(26, 77, 92, 0.3);
 }
 
 .primary-button:active {
@@ -186,9 +186,9 @@ main {
 
 .select-field:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #1a4d5c;
     background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(26, 77, 92, 0.1);
 }
 
 /* Alert Styles */
@@ -274,7 +274,7 @@ main {
 
 .button {
     display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a4d5c;
     color: white;
     text-decoration: none;
     padding: 0.8rem 1.5rem;
@@ -288,7 +288,7 @@ main {
 
 .button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 5px 15px rgba(26, 77, 92, 0.3);
 }
 
 .button:active {
@@ -311,7 +311,7 @@ main {
 }
 
 .table-list th {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a4d5c;
     color: white;
     padding: 1rem;
     text-align: left;
@@ -330,12 +330,12 @@ main {
 }
 
 .table-list tr:hover {
-    background: #e3f2fd;
+    background: #e8f4f8;
     transition: background 0.2s ease;
 }
 
 .table-list a {
-    color: #667eea;
+    color: #1a4d5c;
     text-decoration: none;
     font-weight: 500;
     padding: 0.3rem 0.6rem;
@@ -344,7 +344,7 @@ main {
 }
 
 .table-list a:hover {
-    background: #667eea;
+    background: #1a4d5c;
     color: white;
 }
     </style>
