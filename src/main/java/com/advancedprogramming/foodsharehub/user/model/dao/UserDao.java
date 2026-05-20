@@ -125,6 +125,30 @@ public class UserDao {
         return volunteers;
     }
 
-
+// GET VOLUNTEER BY NAME
+    public User getVolunteerByName(String name) {
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                return null;
+            }
+            String sql = "SELECT * FROM user WHERE name=? AND role='volunteer'";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, name);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        User user = new User();
+                        user.setId(rs.getInt("id"));
+                        user.setFullName(rs.getString("name"));
+                        user.setEmail(rs.getString("email"));
+                        user.setRole(rs.getString("role"));
+                        return user;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     
 }
