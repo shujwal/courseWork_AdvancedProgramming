@@ -1,6 +1,4 @@
 package com.advancedprogramming.foodsharehub.user.controller;
-
-
 import com.advancedprogramming.foodsharehub.user.model.User;
 import com.advancedprogramming.foodsharehub.user.model.dao.UserDao;
 import jakarta.servlet.ServletException;
@@ -54,3 +52,4 @@ public class LoginServlet extends HttpServlet {
         }
     }
 }
+//Login page
